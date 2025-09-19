@@ -4,25 +4,39 @@
     {
         public static Maze Generate(uint size, Algorithm algorithm, EventHandler<int[,]>? gridChangedEvent = null)
         {
+            var emptyMaze = new Maze(size, gridChangedEvent);
             var maze = algorithm switch
             {
-                Algorithm.Kruskals => Kruskals(size, gridChangedEvent),
-                _ => new Maze(size)
+                Algorithm.Kruskals => Kruskals(emptyMaze),
+                _ => Random(emptyMaze)
             };
 
             return maze;
         }
 
-        private static Maze Kruskals(uint size, EventHandler<int[,]>? gridChangedEvent = null)
+        private static Maze Kruskals(Maze maze)
         {
-            var maze = new Maze(size, gridChangedEvent)
-                .GenerateWalls();
+            var wallSegments = maze
+                .GenerateWalls()
+                .GetWallSegments();
 
-            // temp testing
-            while(maze.PointCount(0) != maze.Grid.Length)
+            return maze;
+        }
+
+        private static Maze Random(Maze maze)
+        {
+            var wallSegments = maze
+                .GenerateWalls()
+                .CreateStartEnd()
+                .GetWallSegments();
+
+            var randomIterationCount = new Random()
+                .Next(wallSegments.Count / 2, wallSegments.Count);
+
+            for (var i = 0; i < randomIterationCount; i++)
             {
-                var (x, y) = maze.GetRandomPoint(1);
-                maze.SetPoint(x,y, 0);
+                var point = maze.GetRandomPoint(wallSegments, -1);
+                maze.SetPoint(point, 0);
             }
 
             return maze;
@@ -31,6 +45,7 @@
 
     public enum Algorithm
     {
+        Random = default,
         Kruskals
     }
 }
