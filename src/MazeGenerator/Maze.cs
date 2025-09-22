@@ -6,7 +6,10 @@
 
         public int[,] Grid { get; private set; } = new int[size, size];
 
-        public event EventHandler<int[,]> GridChanged = gridChangedEvent;
+        public event EventHandler<int[,]>? GridChanged = gridChangedEvent;
+
+        public static Point Start => new(1, 0);
+        public Point End => new((int)Size - 2, (int)Size - 1);
 
         public Maze GenerateWalls()
         {
@@ -30,8 +33,8 @@
 
         public Maze CreateStartEnd()
         {
-            Grid[(int)Size - 2, 0] = 0;
-            Grid[1, (int)Size - 1] = 0;
+            SetPoint(Start, 0);
+            SetPoint(End, 0);
             return this;
         }
 
@@ -76,14 +79,13 @@
 
         public List<Point> GetWallSegments()
         {
-            var size = Grid.GetLength(0);
             List<Point> points = [];
-            for (int x = 0; x < size; x++)
+            for (int x = 0; x < Size; x++)
             {
-                for (int y = 0; y < size; y++)
+                for (int y = 0; y < Size; y++)
                 {
                     if (x == 0 || y == 0 ||
-                        x == size - 1 || y == size - 1)
+                        x == Size - 1 || y == Size - 1)
                         continue; // skip outer walls
 
                     if (x % 2 == 0 && y % 2 != 0) points.Add(new(x, y));
@@ -92,6 +94,7 @@
             }
             return points;
         }
+
         public override string ToString()
         {
             var gridString = string.Empty;
@@ -99,14 +102,13 @@
             {
                 for (int y = 0; y < Size; y++)
                 {
-                    if(Grid[x, y] == 0)
+                    var gridValue = Grid[x, y] switch
                     {
-                        gridString += "  ";
-                    }
-                    if (Grid[x, y] == 1)
-                    {
-                        gridString += "[]";
-                    }
+                        0 => "  ",
+                        1 => "██",
+                        2 => "░░",
+                    };
+                    gridString += gridValue;
                 }
                 gridString += Environment.NewLine;
             }
