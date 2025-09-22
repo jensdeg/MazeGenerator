@@ -10,7 +10,7 @@
                 Algorithm.Kruskals => Kruskals(emptyMaze),
                 _ => Random(emptyMaze)
             };
-
+            maze.CallGridChangedEvent();
             return maze;
         }
 
@@ -25,24 +25,40 @@
 
         private static Maze Random(Maze maze)
         {
-            var wallSegments = maze
-                .GenerateWalls()
-                .CreateStartEnd()
-                .GetWallSegments();
+            bool solved = false;
 
-            var randomIterationCount = new Random()
-                .Next(wallSegments.Count / 2, wallSegments.Count);
-
-            for (var i = 0; i < randomIterationCount; i++)
+            while (!solved) // brutforcing a new maze untill its solvable
             {
-                var point = maze.GetRandomPoint(wallSegments, -1);
-                maze.SetPoint(point, 0);
+                var wallSegments = maze
+                    .GenerateWalls()
+                    .CreateStartEnd()
+                    .GetWallSegments();
+
+                var randomIterationCount = new Random()
+                    .Next(wallSegments.Count / 2, wallSegments.Count);
+
+                for (var i = 0; i < randomIterationCount; i++)
+                {
+                    var point = maze.GetRandomPoint(wallSegments, -1);
+                    maze.SetPoint(point, 0);
+                }
+
+                if (maze.TrySolveMaze()) solved = true;
+                else maze.ResetGrid();
+            }
+
+            // resetting solving path
+            for (int x = 0; x < maze.Size; x++)
+            {
+                for (int y = 0; y < maze.Size; y++)
+                {
+                    if (maze.Grid[x, y] == 2) maze.Grid[x, y] = 0;
+                }
             }
 
             return maze;
         }
     }
-
     public enum Algorithm
     {
         Random = default,

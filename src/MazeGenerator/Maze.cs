@@ -9,6 +9,7 @@
         public event EventHandler<int[,]>? GridChanged = gridChangedEvent;
 
         public static Point Start => new(1, 0);
+
         public Point End => new((int)Size - 2, (int)Size - 1);
 
         public Maze GenerateWalls()
@@ -51,7 +52,7 @@
             var rndX = random.Next((int)Size);
             var rndY = random.Next((int)Size);
 
-            if (Grid[rndX, rndY] != pointValue && pointValue > 0) return GetRandomPoint(pointValue);
+            if (Grid[rndX, rndY] != pointValue && pointValue >= 0) return GetRandomPoint(pointValue);
             else return new Point(rndX, rndY);
         }
 
@@ -60,7 +61,7 @@
             var rndNumber = new Random().Next(points.Count);
             var point = points[rndNumber];
 
-            if (Grid[point.X, point.Y] != pointValue && pointValue > 0) return GetRandomPoint(points, pointValue);
+            if (Grid[point.X, point.Y] != pointValue && pointValue >= 0) return GetRandomPoint(points, pointValue);
             else return new Point(point.X, point.Y);
         }
 
@@ -75,6 +76,11 @@
                 }
             }
             return count;
+        }
+
+        public void ResetGrid()
+        {
+            Grid = Grid = new int[Size, Size];
         }
 
         public List<Point> GetWallSegments()
@@ -93,6 +99,11 @@
                 }
             }
             return points;
+        }
+
+        public void CallGridChangedEvent()
+        {
+            GridChanged?.Invoke(this, Grid);
         }
 
         public override string ToString()
@@ -116,5 +127,14 @@
         }
     }
 
-    public readonly record struct Point(int X, int Y);
+    public readonly record struct Point(int X, int Y)
+    {
+        public IReadOnlyCollection<Point> Neighbours => [
+            new(X + 1, Y),
+            new(X - 1, Y),
+            new(X, Y + 1),
+            new(X, Y - 1)
+        ];
+
+    }
 }
