@@ -51,7 +51,7 @@
             {
                 for (int y = 0; y < maze.Size; y++)
                 {
-                    if (maze.Grid[x, y] == 2) maze.SetPoint(new Point(x,y), 0);
+                    if (maze.Grid[x, y] == 2) maze.SetPoint(new Point(x, y), 0);
                 }
             }
 

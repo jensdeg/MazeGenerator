@@ -104,7 +104,7 @@
         public override string ToString()
         {
             var gridString = string.Empty;
-            for(int x = 0; x < Size; x++)
+            for (int x = 0; x < Size; x++)
             {
                 for (int y = 0; y < Size; y++)
                 {
