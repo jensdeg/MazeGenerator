@@ -2,7 +2,7 @@
 {
     public static class MazeGen
     {
-        public static Maze Generate(uint size, Algorithm algorithm, EventHandler<int[,]>? gridChangedEvent = null)
+        public static Maze Generate(uint size, Algorithm algorithm, EventHandler<Point>? gridChangedEvent = null)
         {
             var emptyMaze = new Maze(size, gridChangedEvent);
             var maze = algorithm switch
@@ -10,7 +10,6 @@
                 Algorithm.Kruskals => Kruskals(emptyMaze),
                 _ => Random(emptyMaze)
             };
-            maze.CallGridChangedEvent();
             return maze;
         }
 
@@ -52,7 +51,7 @@
             {
                 for (int y = 0; y < maze.Size; y++)
                 {
-                    if (maze.Grid[x, y] == 2) maze.Grid[x, y] = 0;
+                    if (maze.Grid[x, y] == 2) maze.SetPoint(new Point(x,y), 0);
                 }
             }
 

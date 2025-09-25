@@ -1,11 +1,11 @@
 ﻿using MazeGenerator;
 
-var maze = MazeGen.Generate(50, Algorithm.Random, Maze_OnGridChanged);
+var maze = MazeGen.Generate(25, Algorithm.Random, OnGridChanged);
 
 Console.WriteLine("Done");
 Console.ReadLine();
 
-static void Maze_OnGridChanged(object? sender, int[,] maze)
+static void OnGridChanged(object? sender, Point point)
 {
     Console.Clear();
     Console.WriteLine(sender);

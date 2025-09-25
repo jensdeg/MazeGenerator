@@ -1,16 +1,16 @@
 ﻿namespace MazeGenerator
 {
-    public class Maze(uint size, EventHandler<int[,]>? gridChangedEvent = null)
+    public class Maze(uint size, EventHandler<Point>? gridChangedEvent = null)
     {
         public uint Size { get; private set; } = size;
 
         public int[,] Grid { get; private set; } = new int[size, size];
 
-        public event EventHandler<int[,]>? GridChanged = gridChangedEvent;
-
         public static Point Start => new(1, 0);
 
         public Point End => new((int)Size - 2, (int)Size - 1);
+
+        public event EventHandler<Point>? GridChanged = gridChangedEvent;
 
         public Maze GenerateWalls()
         {
@@ -43,7 +43,7 @@
         {
             if (Grid[point.X, point.Y] == value) return;
             Grid[point.X, point.Y] = value;
-            GridChanged?.Invoke(this, Grid);
+            GridChanged?.Invoke(this, point);
         }
 
         public Point GetRandomPoint(int pointValue)
@@ -101,11 +101,6 @@
             return points;
         }
 
-        public void CallGridChangedEvent()
-        {
-            GridChanged?.Invoke(this, Grid);
-        }
-
         public override string ToString()
         {
             var gridString = string.Empty;
@@ -118,6 +113,7 @@
                         0 => "  ",
                         1 => "██",
                         2 => "░░",
+                        _ => "  ",
                     };
                     gridString += gridValue;
                 }
@@ -135,6 +131,5 @@
             new(X, Y + 1),
             new(X, Y - 1)
         ];
-
     }
 }
